@@ -1,0 +1,11 @@
+.cat {
+    background-color: orange;
+    color: purple;
+    margin: 10px;
+    padding: 10px;
+    border-radius: 1em;
+}
+
+.rainbow {
+    background-image: linear-gradient(to right, red,orange,yellow,green,blue,indigo,violet);
+}
