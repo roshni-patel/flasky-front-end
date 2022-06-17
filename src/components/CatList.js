@@ -2,7 +2,7 @@ import "./CatList.css";
 import Cat from "./Cat";
 import PropTypes from "prop-types";
 
-const CatList = ({ catData }) => {
+const CatList = ({ catData, setCatAgeCallback, deleteCatCallback }) => {
   // const catData = props.catData;
 
   // One way of doing it
@@ -23,11 +23,14 @@ const CatList = ({ catData }) => {
   // Another way of doing it, as in Learn lesson
   const catComponents = catData.map((cat) => (
     <Cat
+      id={cat.id}
       key={cat.id}
       name={cat.name}
       saying={cat.saying}
       age={cat.age}
       color={cat.color}
+      setCatAgeCallback={setCatAgeCallback}
+      deleteCatCallback={deleteCatCallback}
     />
   ));
 
@@ -41,5 +44,7 @@ const CatList = ({ catData }) => {
 
 CatList.propTypes = {
   catData: PropTypes.array.isRequired,
+  setCatAgeCallback: PropTypes.func.isRequired,
+  deleteCatCallback: PropTypes.func.isRequired,
 };
 export default CatList;
