@@ -1,19 +1,20 @@
 import "./App.css";
+import axios from "axios";
 import CatList from "./components/CatList";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 function App() {
-  const catData1 = [
-    {
-      id: 1,
-      name: "Jeff THEE Cat",
-      saying: "rainbows 5evah",
-      age: 5,
-      color: "tabby",
-    },
-    { id: 2, name: "Lily", saying: "cry", age: 5, color: "tabby" },
-    { id: 3, name: "Richard", saying: "food", age: 5, color: "tabby" },
-    { id: 4, name: "Prince", saying: "meow", age: 5, color: "tuxedo" },
-  ];
+  // const catData1 = [
+  //   {
+  //     id: 1,
+  //     name: "Jeff THEE Cat",
+  //     saying: "rainbows 5evah",
+  //     age: 5,
+  //     color: "tabby",
+  //   },
+  //   { id: 2, name: "Lily", saying: "cry", age: 5, color: "tabby" },
+  //   { id: 3, name: "Richard", saying: "food", age: 5, color: "tabby" },
+  //   { id: 4, name: "Prince", saying: "meow", age: 5, color: "tuxedo" },
+  // ];
 
   // ids must be unique within the same array, not necessarily across arrays
   const catData2 = [
@@ -21,7 +22,19 @@ function App() {
     { id: 4, name: "Richard", saying: "food", age: 5, color: "tabby" },
   ];
 
-  const [cats, setCats] = useState(catData1);
+  const [cats, setCats] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get(`http://127.0.0.1:5000/cats`)
+      .then((response) => {
+        setCats(response.data);
+      })
+      .catch((error) => {
+        console.log("OH NOES OH NOES!");
+      });
+  }, []);
+
   const [placeholder, setPlaceholder] = useState("Hello");
   const handleAppClick = () => {
     setPlaceholder(placeholder + "!");
@@ -32,20 +45,52 @@ function App() {
 
     // create a copy of cats
     const olderCats = [...cats];
-    // increase the age of cat with id
+    let targetCat;
+
     for (let cat of olderCats) {
       if (cat.id === id) {
-        cat.age += 1;
+        targetCat = cat;
       }
     }
+
+    axios
+      .put(`http://127.0.0.1:5000/cats/${targetCat.id}`, {
+        name: targetCat.name,
+        age: targetCat.age + 1,
+        color: targetCat.color,
+        saying: targetCat.saying,
+      })
+      .then((response) => {
+        targetCat.age += 1;
+        setCats(olderCats);
+      })
+      .catch((error) => {
+        console.log("Couldn't set cat age older");
+      });
+
+    // increase the age of cat with id
+    // for (let cat of olderCats) {
+    //   if (cat.id === id) {
+    //     cat.age += 1;
+    //   }
+    // }
     // call setCats to update array
-    setCats(olderCats);
+    // setCats(olderCats);
   };
 
   const deleteCat = (id) => {
     console.log("delete", id);
-    const newCats = cats.filter((cat) => cat.id !== id);
-    setCats(newCats);
+    axios
+      .delete(`http://127.0.0.1:5000/cats/${id}`)
+      .then((response) => {
+        const newCats = cats.filter((cat) => cat.id !== id);
+        setCats(newCats);
+      })
+      .catch((error) => {
+        console.log("Unable to delete!");
+      });
+    // const newCats = cats.filter((cat) => cat.id !== id);
+    // setCats(newCats);
   };
   return (
     <div className="App">
